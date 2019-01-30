@@ -1,0 +1,46 @@
+配置中心多环境 使用 java -jar xxx.jar --server.port=9999 --spring.cloud.config.profile=prod 
+即yml中的名称，也可以用别名
+CI 持续集成
+CD 持续部署:发布到不同环境
+DevOps 带V奥泊斯：以CICD为基础更好的优化开发测试运维的流程
+https://www.kubernetes.org.cn/4948.html
+
+$docker pull gitlab/gitlab-ce:latest
+--------------------------------------
+删除所有退出状态的容器 $docker rm $(docker ps -aq)
+docker ps -a 查看
+----------------------------
+$kubectl run dep名称 --image=XXX --port=8888   创建deployment
+$kubectl get deployments 查看  启动available 1是启动
+$kubectl get pods -o wide
+$docker ps  
+$journalctl -f  查看系统日志
+$kubectl describe deploy 名字
+$netstat -ntlp 查看端口 
+$kubectl scale deploy 名称 --replicas=5 扩缩容
+$kubectl get deploy  简写
+$kubectl get pods  -o wide
+$kubectl set image deploy dep名称 容器名=xxx:v1 更新 这里dep名称和容器名相同
+$kubectl rollout status deploy dep名称  --查看状态
+$kubectl rollout undo deploy dep名称 如果set出错回归操作
+$kubectl delete deployments 名字  --删除
+--------
+定义一个 yaml文件
+$kubectl create -f xxx.yaml 
+$kubectl get pods
+$kubectl get deploy 
+
+$kubectl apply -f XXX.yaml  这个是哪个配置文件
+kubectl get svc
+-----------CICD----------------------
+Settings下面Integrations集成里面 填一个地址 () 这个要Add webhook
+            Trigger选中Push events
+1 上面的地址是从Jenkins来的，新建一个任务 选中流水线(pipeline)
+              构建触发器 选中触发远程构建
+2 设置Jenkins 系统管理->全局安全配置
+  CSRF protection 不选 防止跨站点请求伪造
+  授权策略 选中 Allow anonymous read access 
+3 流水线  Pipeline script
+  脚本 可以选择 try sample Pipeline 会自动生成脚本，比如选择 git
+
+
