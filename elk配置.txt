@@ -1,0 +1,73 @@
+https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.6.2.tar.gz
+https://artifacts.elastic.co/downloads/kibana/kibana-6.6.2-linux-x86_64.tar.gz
+https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-6.6.2-linux-x86_64.tar.gz
+https://artifacts.elastic.co/downloads/logstash/logstash-6.6.2.tar.gz
+下载 wget
+$tar -zxvf elasticsearch-6.6.2.tar.gz
+$vi elasticsearch-6.6.2/config/elasticsearch.yml 
+    cluster.name: es6.6
+	node.name: node-1
+	bootstrap.memory_lock: true  #官方建议设置成 true 注意这个设置需要修改*******处配置
+    path.data: /u01/elk/es/data
+    path.logs: /u01/elk/es/logs
+    network.host: 0.0.0.0   如果修改成0.0.0.0 所有用户都可访问
+$useradd gds
+$passwd gds  输入 123qweASD	
+#管理员用户
+$chown cargo elasticsearch-6.6.2 -R   使用cargo用户授权
+#无法启动 需要做如下配置
+$vi /etc/sysctl.conf
+    添加 vm.max_map_count=655360  自己开发机器 使用 262144
+$ sysctl -p
+$vi /etc/security/limits.conf 
+最后面添加 cargo hard nofile 65536 
+           cargo soft nofile 65536   
+   #cargo是用户名
+#重新登录不用重启 在 cargo用户下执行 $ulimit -Hn 线上65536 就可以了
+-----bootstrap.memory_lock: true 时需要修改*******
+/etc/security/limits.conf 
+cargo soft memlock unlimited
+cargo hard memlock unlimited
+
+修改：
+/etc/sysctl.conf 
+vm.swappiness=0
+-------
+
+http://192.168.220.94:9200
+$elasticsearch-6.6.2/bin/elasticsearch -d 启动  &可以换成-d,-d无启动信息 &有
+安装kibana 
+$tar -zxvf  kibana-6.6.2-linux-x86_64.tar.gz
+$vi kibana-6.6.2-linux-x86_64/config/kibana.yml
+    server.port: 5601
+	server.host: "0.0.0.0"    #这里不用 localhost 
+    elasticsearch.hosts: ["http://192.168.220.94:9200"]
+$kibana-6.6.2-linux-x86_64/bin/kibana  & 启动
+ nohup ./kibana-6.6.2-linux-x86_64/bin/kibana &  这种启动
+#访问 http://192.168.220.94:5601
+-----------logstash使用root用户----------------
+$tar -zxvf logstash-6.6.2.tar.gz
+
+#配置 logstash.yml
+   path.data: /u01/elk/es/logstash/data    #数据存储路径 
+   #path.config: /etc/logstash/conf.d/*.conf   #配置文件目录
+   path.logs: /u01/elk/es/logstash/log   #日志输出路径 生产应该放到 /var/log/logstash
+
+   # chown logstash.logstash /data/logstash  #授权
+
+$/u01/elk/logstash-6.6.2/bin/logstash -f /u01/elk/logstash-6.6.2/config/logstash-demo.conf
+#$./logstash-6.6.2/bin/logstash -f logstash-6.6.2/config/logstash-simple.conf 启动
+#$nohup ./logstash-6.6.2/bin/logstash -f ***.conf –config.reload.automatic >/dev/null 2>/dev/null & #不全
+
+在input 放入日志/u01/elk/es/input/demo.log
+
+-------------redis单机版------------------
+$tar zxvf redis-5.0.3.tar.gz  -C redis-single/   #这种目录下有个redis-5.0.3
+$make install
+$cp redis.conf redis/bin/
+$cd /u01/redis/redis-single/redis-5.0.3/redis/bin 
+设置 redis.conf 的daemonize 为yes
+$ ./redis-server redis.conf  #启动 
+$ ./redis-cli   #启动客户端
+ps -ef |grep redis
+redis-cli -h 192.168.220.94 -p 6379  
