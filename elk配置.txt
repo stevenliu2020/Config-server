@@ -2,72 +2,77 @@ https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.6.2.tar.gz
 https://artifacts.elastic.co/downloads/kibana/kibana-6.6.2-linux-x86_64.tar.gz
 https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-6.6.2-linux-x86_64.tar.gz
 https://artifacts.elastic.co/downloads/logstash/logstash-6.6.2.tar.gz
-ÏÂÔØ wget
+ä¸‹è½½ wget
 $tar -zxvf elasticsearch-6.6.2.tar.gz
 $vi elasticsearch-6.6.2/config/elasticsearch.yml 
     cluster.name: es6.6
 	node.name: node-1
-	bootstrap.memory_lock: true  #¹Ù·½½¨ÒéÉèÖÃ³É true ×¢ÒâÕâ¸öÉèÖÃĞèÒªĞŞ¸Ä*******´¦ÅäÖÃ
+	bootstrap.memory_lock: true  #å®˜æ–¹å»ºè®®è®¾ç½®æˆ true æ³¨æ„è¿™ä¸ªè®¾ç½®éœ€è¦ä¿®æ”¹*******å¤„é…ç½®
     path.data: /u01/elk/es/data
     path.logs: /u01/elk/es/logs
-    network.host: 0.0.0.0   Èç¹ûĞŞ¸Ä³É0.0.0.0 ËùÓĞÓÃ»§¶¼¿É·ÃÎÊ
+    network.host: 0.0.0.0   å¦‚æœä¿®æ”¹æˆ0.0.0.0 æ‰€æœ‰ç”¨æˆ·éƒ½å¯è®¿é—®
 $useradd gds
-$passwd gds  ÊäÈë 123qweASD	
-#¹ÜÀíÔ±ÓÃ»§
-$chown cargo elasticsearch-6.6.2 -R   Ê¹ÓÃcargoÓÃ»§ÊÚÈ¨
-#ÎŞ·¨Æô¶¯ ĞèÒª×öÈçÏÂÅäÖÃ
+$passwd gds  è¾“å…¥ 123qweASD	
+#ç®¡ç†å‘˜ç”¨æˆ·
+$chown cargo elasticsearch-6.6.2 -R   ä½¿ç”¨cargoç”¨æˆ·æˆæƒ
+#æ— æ³•å¯åŠ¨ éœ€è¦åšå¦‚ä¸‹é…ç½®
 $vi /etc/sysctl.conf
-    Ìí¼Ó vm.max_map_count=655360  ×Ô¼º¿ª·¢»úÆ÷ Ê¹ÓÃ 262144
+    æ·»åŠ  vm.max_map_count=655360  è‡ªå·±å¼€å‘æœºå™¨ ä½¿ç”¨ 262144
 $ sysctl -p
 $vi /etc/security/limits.conf 
-×îºóÃæÌí¼Ó cargo hard nofile 65536 
+æœ€åé¢æ·»åŠ  cargo hard nofile 65536 
            cargo soft nofile 65536   
-   #cargoÊÇÓÃ»§Ãû
-#ÖØĞÂµÇÂ¼²»ÓÃÖØÆô ÔÚ cargoÓÃ»§ÏÂÖ´ĞĞ $ulimit -Hn ÏßÉÏ65536 ¾Í¿ÉÒÔÁË
------bootstrap.memory_lock: true Ê±ĞèÒªĞŞ¸Ä*******
+   #cargoæ˜¯ç”¨æˆ·å
+#é‡æ–°ç™»å½•ä¸ç”¨é‡å¯ åœ¨ cargoç”¨æˆ·ä¸‹æ‰§è¡Œ $ulimit -Hn çº¿ä¸Š65536 å°±å¯ä»¥äº†
+-----bootstrap.memory_lock: true æ—¶éœ€è¦ä¿®æ”¹*******
 /etc/security/limits.conf 
 cargo soft memlock unlimited
 cargo hard memlock unlimited
 
-ĞŞ¸Ä£º
+ä¿®æ”¹ï¼š
 /etc/sysctl.conf 
 vm.swappiness=0
 -------
 
 http://192.168.220.94:9200
-$elasticsearch-6.6.2/bin/elasticsearch -d Æô¶¯  &¿ÉÒÔ»»³É-d,-dÎŞÆô¶¯ĞÅÏ¢ &ÓĞ
-°²×°kibana 
+$elasticsearch-6.6.2/bin/elasticsearch -d å¯åŠ¨  &å¯ä»¥æ¢æˆ-d,-dæ— å¯åŠ¨ä¿¡æ¯ &æœ‰
+å®‰è£…kibana 
 $tar -zxvf  kibana-6.6.2-linux-x86_64.tar.gz
 $vi kibana-6.6.2-linux-x86_64/config/kibana.yml
     server.port: 5601
-	server.host: "0.0.0.0"    #ÕâÀï²»ÓÃ localhost 
+	server.host: "0.0.0.0"    #è¿™é‡Œä¸ç”¨ localhost 
     elasticsearch.hosts: ["http://192.168.220.94:9200"]
-$kibana-6.6.2-linux-x86_64/bin/kibana  & Æô¶¯
- nohup ./kibana-6.6.2-linux-x86_64/bin/kibana &  ÕâÖÖÆô¶¯
-#·ÃÎÊ http://192.168.220.94:5601
------------logstashÊ¹ÓÃrootÓÃ»§----------------
+$kibana-6.6.2-linux-x86_64/bin/kibana  & å¯åŠ¨
+ nohup ./kibana-6.6.2-linux-x86_64/bin/kibana &  è¿™ç§å¯åŠ¨
+#è®¿é—® http://192.168.220.94:5601
+-----------logstashä½¿ç”¨rootç”¨æˆ·----------------
 $tar -zxvf logstash-6.6.2.tar.gz
 
-#ÅäÖÃ logstash.yml
-   path.data: /u01/elk/es/logstash/data    #Êı¾İ´æ´¢Â·¾¶ 
-   #path.config: /etc/logstash/conf.d/*.conf   #ÅäÖÃÎÄ¼şÄ¿Â¼
-   path.logs: /u01/elk/es/logstash/log   #ÈÕÖ¾Êä³öÂ·¾¶ Éú²úÓ¦¸Ã·Åµ½ /var/log/logstash
+#é…ç½® logstash.yml
+   path.data: /u01/elk/es/logstash/data    #æ•°æ®å­˜å‚¨è·¯å¾„ 
+   #path.config: /etc/logstash/conf.d/*.conf   #é…ç½®æ–‡ä»¶ç›®å½•
+   path.logs: /u01/elk/es/logstash/log   #æ—¥å¿—è¾“å‡ºè·¯å¾„ ç”Ÿäº§åº”è¯¥æ”¾åˆ° /var/log/logstash
 
-   # chown logstash.logstash /data/logstash  #ÊÚÈ¨
+   # chown logstash.logstash /data/logstash  #æˆæƒ
 
 $/u01/elk/logstash-6.6.2/bin/logstash -f /u01/elk/logstash-6.6.2/config/logstash-demo.conf
-#$./logstash-6.6.2/bin/logstash -f logstash-6.6.2/config/logstash-simple.conf Æô¶¯
-#$nohup ./logstash-6.6.2/bin/logstash -f ***.conf ¨Cconfig.reload.automatic >/dev/null 2>/dev/null & #²»È«
+#$./logstash-6.6.2/bin/logstash -f logstash-6.6.2/config/logstash-simple.conf å¯åŠ¨
+#$nohup ./logstash-6.6.2/bin/logstash -f ***.conf â€“config.reload.automatic >/dev/null 2>/dev/null & #ä¸å…¨
 
-ÔÚinput ·ÅÈëÈÕÖ¾/u01/elk/es/input/demo.log
+åœ¨input æ”¾å…¥æ—¥å¿—/u01/elk/es/input/demo.log
 
--------------redisµ¥»ú°æ------------------
-$tar zxvf redis-5.0.3.tar.gz  -C redis-single/   #ÕâÖÖÄ¿Â¼ÏÂÓĞ¸öredis-5.0.3
+å®šä¹‰ç´¢å¼•æ¨¡å¼ Management->Index Patterns ç¬¬äºŒæ¬¡éœ€è¦ç‚¹å‡»å·¦è¾¹çš„Create index pattern
+è¾“å…¥ demo_input_log*  #æ„Ÿè§‰å’Œconfé…ç½®çš„indexç±»ä¼¼ ->Next step
+     ->é€‰æ‹©@timestamp ->Create index pattern
+logä¸­å†™å…¥æ—¥å¿—ï¼Œåœ¨Discoverä¸ŠæŸ¥çœ‹ï¼Œ	 
+
+-------------rediså•æœºç‰ˆ------------------
+$tar zxvf redis-5.0.3.tar.gz  -C redis-single/   #è¿™ç§ç›®å½•ä¸‹æœ‰ä¸ªredis-5.0.3
 $make install
 $cp redis.conf redis/bin/
 $cd /u01/redis/redis-single/redis-5.0.3/redis/bin 
-ÉèÖÃ redis.conf µÄdaemonize Îªyes
-$ ./redis-server redis.conf  #Æô¶¯ 
-$ ./redis-cli   #Æô¶¯¿Í»§¶Ë
+è®¾ç½® redis.conf çš„daemonize ä¸ºyes
+$ ./redis-server redis.conf  #å¯åŠ¨ 
+$ ./redis-cli   #å¯åŠ¨å®¢æˆ·ç«¯
 ps -ef |grep redis
 redis-cli -h 192.168.220.94 -p 6379  
